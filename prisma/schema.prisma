@@ -1,0 +1,127 @@
+// ONM Energy — VP Dashboard Prisma Schema
+// Stack: SQLite (local-first)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Division {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique // OPV, ESS, WPD, GSS, HFO
+  name      String
+  colorHex  String
+  leadName  String?
+  projects  Project[]
+  kpis      KPI[]
+  meetings  Meeting[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id                Int         @id @default(autoincrement())
+  divisionId        Int
+  division          Division    @relation(fields: [divisionId], references: [id])
+  name              String
+  code              String      @unique
+  location          String?
+  capacityMw        Float?
+  statusRag         String      @default("Green") // Green, Yellow, Red
+  percentComplete   Float       @default(0)
+  currentPhase      String?
+  nextMilestone     String?
+  nextMilestoneDate DateTime?
+  needsVpAttention  Boolean     @default(false)
+  meetings          Meeting[]
+  issues            Issue[]
+  kpis              KPI[]
+  actionItems       ActionItem[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Meeting {
+  id          Int          @id @default(autoincrement())
+  projectId   Int?
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  divisionId  Int?
+  division    Division?    @relation(fields: [divisionId], references: [id])
+  meetingDate DateTime
+  title       String
+  attendees   String       // JSON array as string
+  summary     String
+  decisions   String?
+  content     String?      // Rich text HTML content (Tiptap)
+  tags        String?      // comma-separated tags
+  source      String       @default("manual") // manual, import, feed
+  createdBy   String?
+  actionItems ActionItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model ActionItem {
+  id          Int      @id @default(autoincrement())
+  meetingId   Int?
+  meeting     Meeting? @relation(fields: [meetingId], references: [id])
+  projectId   Int?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  description String
+  owner       String
+  dueDate     DateTime
+  status      String   @default("Open") // Open, In-progress, Done, Overdue
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Issue {
+  id               Int      @id @default(autoincrement())
+  projectId        Int
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  severity         String   @default("Med") // Low, Med, High, Critical
+  status           String   @default("Open") // Open, In-progress, Resolved
+  owner            String?
+  needsVpAttention Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model KPI {
+  id         Int          @id @default(autoincrement())
+  projectId  Int?
+  project    Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  divisionId Int?
+  division   Division?    @relation(fields: [divisionId], references: [id])
+  name       String
+  unit       String
+  target     Float?
+  readings   KPIReading[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model KPIReading {
+  id          Int      @id @default(autoincrement())
+  kpiId       Int
+  kpi         KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  period      String   // e.g. "2025-01"
+  actualValue Float
+  createdAt   DateTime @default(now())
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("Viewer") // Viewer, Editor, Admin
+  divisionId   Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
