@@ -59,11 +59,11 @@ async function main() {
 
   // DIVISIONS
   const divisions = [
-    { code: 'OPV', name: 'Operation & Maintenance, Solar PV Division', colorHex: '#f59e0b', leadName: 'Mr. Somchai Pattana' },
-    { code: 'ESS', name: 'Energy Storage System Division',             colorHex: '#3b82f6', leadName: 'Ms. Nattaya Wongsuk' },
-    { code: 'WPD', name: 'Wind Power Division',                        colorHex: '#06b6d4', leadName: 'Mr. Krit Siriwat'   },
-    { code: 'GSS', name: 'Grid & Substation Division',                 colorHex: '#8b5cf6', leadName: 'Ms. Pornpan Sathit' },
-    { code: 'HFO', name: 'HFO & LNG Division',                         colorHex: '#ef4444', leadName: 'Mr. Wanchai Rungsang'},
+    { code: 'OPV', name: 'Operation & Maintenance, Solar PV Division', colorHex: '#f59e0b', leadName: 'Sak Sereyvuth · Senior Director' },
+    { code: 'ESS', name: 'Energy Storage System Division',             colorHex: '#3b82f6', leadName: 'Suom Vireak · Director' },
+    { code: 'WPD', name: 'Wind Power Division',                        colorHex: '#06b6d4', leadName: 'Suom Vireak · Director'   },
+    { code: 'GSS', name: 'Grid & Substation Division',                 colorHex: '#8b5cf6', leadName: 'Tann Slengdy · Director' },
+    { code: 'HFO', name: 'HFO & LNG Division',                         colorHex: '#ef4444', leadName: 'Tann Slengdy · Director'},
   ]
   const divIds = {}
   for (const d of divisions) {

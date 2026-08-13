@@ -38,19 +38,19 @@ async function main() {
   // DIVISIONS
   // ============================================================
   const opv = await prisma.division.create({
-    data: { code: 'OPV', name: 'Operation & Maintenance, Solar PV Division', colorHex: '#f59e0b', leadName: 'Mr. Somchai Pattana' },
+    data: { code: 'OPV', name: 'Operation & Maintenance, Solar PV Division', colorHex: '#f59e0b', leadName: 'Sak Sereyvuth · Senior Director' },
   })
   const ess = await prisma.division.create({
-    data: { code: 'ESS', name: 'Energy Storage System Division', colorHex: '#3b82f6', leadName: 'Ms. Nattaya Wongsuk' },
+    data: { code: 'ESS', name: 'Energy Storage System Division', colorHex: '#3b82f6', leadName: 'Suom Vireak · Director' },
   })
   const wpd = await prisma.division.create({
-    data: { code: 'WPD', name: 'Wind Power Division', colorHex: '#06b6d4', leadName: 'Mr. Krit Siriwat' },
+    data: { code: 'WPD', name: 'Wind Power Division', colorHex: '#06b6d4', leadName: 'Suom Vireak · Director' },
   })
   const gss = await prisma.division.create({
-    data: { code: 'GSS', name: 'Grid & Substation Division', colorHex: '#8b5cf6', leadName: 'Ms. Pornpan Sathit' },
+    data: { code: 'GSS', name: 'Grid & Substation Division', colorHex: '#8b5cf6', leadName: 'Tann Slengdy · Director' },
   })
   const hfo = await prisma.division.create({
-    data: { code: 'HFO', name: 'HFO & LNG Division', colorHex: '#ef4444', leadName: 'Mr. Wanchai Rungsang' },
+    data: { code: 'HFO', name: 'HFO & LNG Division', colorHex: '#ef4444', leadName: 'Tann Slengdy · Director' },
   })
 
   // ============================================================
