@@ -127,10 +127,10 @@ function LoginForm() {
             color: '#0f172a',
             letterSpacing: '-0.3px',
           }}>
-            ONM Energy
+            ONM BU Dashboard
           </div>
           <div style={{ fontSize: 13, color: '#64748b', marginTop: 4, fontWeight: 500 }}>
-            VP Office Dashboard · Secure Access
+            VP Office · Secure Access
           </div>
         </div>
 

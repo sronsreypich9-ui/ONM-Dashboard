@@ -80,7 +80,7 @@ export default function PortfolioOverviewPage() {
       {/* Presentation banner — only visible in presentation mode */}
       <div className="presentation-banner" id="pres-banner" style={{ display: 'none' }}>
         <div>
-          <div className="presentation-banner-title">ONM Energy — VP Office Portfolio Review</div>
+          <div className="presentation-banner-title">ONM BU Dashboard — VP Office Review</div>
           <div style={{ fontSize: 13, opacity: 0.85, marginTop: 2 }}>Confidential · For VP Use Only</div>
         </div>
         <div className="presentation-banner-time">{nowStr}</div>

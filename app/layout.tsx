@@ -4,7 +4,7 @@ import { Nav } from '@/components/Nav'
 import { AuthProvider } from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
-  title: 'ONM Energy — VP Office Dashboard',
+  title: 'ONM BU Dashboard — VP Office',
   description: 'Project tracking and meeting memo dashboard for the VP Office',
 }
 

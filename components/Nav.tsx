@@ -65,8 +65,8 @@ export function Nav() {
       <div className="sidebar-logo">
         <div className="logo-mark">ONM</div>
         <div className="logo-text">
-          <span className="logo-text-main">ONM Energy</span>
-          <span className="logo-text-sub">VP Office Dashboard</span>
+          <span className="logo-text-main">ONM BU Dashboard</span>
+          <span className="logo-text-sub">VP Office</span>
         </div>
       </div>
 
@@ -181,7 +181,7 @@ export function Nav() {
 
       {/* Footer */}
       <div className="sidebar-footer" style={{ paddingTop: 8 }}>
-        <div>ONM Energy Corp. · VP Office · {new Date().getFullYear()}</div>
+        <div>ONM BU Dashboard · VP Office · {new Date().getFullYear()}</div>
       </div>
     </nav>
   )
