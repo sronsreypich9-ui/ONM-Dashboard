@@ -55,7 +55,7 @@ export function Nav() {
   // Initials avatar
   const initials = user?.name
     ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-    : 'VP'
+    : 'SS'
 
   const sections = ['MAIN', 'MANAGE']
 
@@ -135,7 +135,7 @@ export function Nav() {
               fontSize: 12.5, fontWeight: 700, color: 'var(--gray-800)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
-              {user?.name || 'VP Admin'}
+              {user?.name || 'Sron Sreypich'}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
               <span style={{
