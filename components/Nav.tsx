@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 
 const navItems = [
-  { href: '/',          label: 'Portfolio Overview', icon: '📊', section: 'MAIN' },
+  { href: '/',          label: 'Project Overview',   icon: '📊', section: 'MAIN' },
   { href: '/divisions', label: 'Divisions',          icon: '🏢', section: 'MAIN' },
   { href: '/projects',  label: 'All Projects',       icon: '📋', section: 'MAIN' },
   { href: '/memos',     label: 'Meeting Memos',      icon: '📝', section: 'MAIN' },

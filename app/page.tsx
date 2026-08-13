@@ -90,7 +90,7 @@ export default function PortfolioOverviewPage() {
       <div className="topbar">
         <div className="topbar-left">
           <div>
-            <div className="topbar-title">Portfolio Overview</div>
+            <div className="topbar-title">Project Overview</div>
             <div className="topbar-subtitle">As of {nowStr}</div>
           </div>
         </div>
