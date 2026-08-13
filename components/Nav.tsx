@@ -38,20 +38,24 @@ export function Nav() {
   }
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: '/login' })
+    if (session) {
+      await signOut({ callbackUrl: '/' })
+    } else {
+      router.push('/')
+    }
   }
 
   // Role badge color
-  const roleBadge = user?.role === 'Admin'
-    ? { bg: '#fef3c7', color: '#92400e', label: 'Admin' }
+  const roleBadge = user?.role === 'Viewer'
+    ? { bg: '#f1f5f9', color: '#475569', label: 'Viewer' }
     : user?.role === 'Editor'
     ? { bg: '#dbeafe', color: '#1e40af', label: 'Editor' }
-    : { bg: '#f1f5f9', color: '#475569', label: 'Viewer' }
+    : { bg: '#fef3c7', color: '#92400e', label: 'Admin' }
 
   // Initials avatar
   const initials = user?.name
     ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-    : '?'
+    : 'VP'
 
   const sections = ['MAIN', 'MANAGE']
 
@@ -131,7 +135,7 @@ export function Nav() {
               fontSize: 12.5, fontWeight: 700, color: 'var(--gray-800)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
-              {user?.name || 'Loading…'}
+              {user?.name || 'VP Admin'}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
               <span style={{
