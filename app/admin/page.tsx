@@ -7,15 +7,21 @@ function AdminContent() {
   const router       = useRouter()
   const searchParams = useSearchParams()
 
-  const [activeTab, setActiveTab] = useState<'project' | 'memo' | 'issue' | 'action' | 'kpi'>(
+  const [activeTab, setActiveTab] = useState<'project' | 'memo' | 'issue' | 'action' | 'kpi' | 'users'>(
     (searchParams.get('tab') as any) || 'project'
   )
   const [projects, setProjects]   = useState<any[]>([])
   const [divisions, setDivisions] = useState<any[]>([])
+  const [users, setUsers]         = useState<any[]>([])
   const [loading, setLoading]     = useState(true)
   const [message, setMessage]     = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   // Forms state
+  const [userForm, setUserForm] = useState({
+    name: '',
+    password: '',
+    role: 'Viewer',
+  })
   const [projectForm, setProjectForm] = useState({
     divisionId: '',
     name: '',
@@ -64,13 +70,27 @@ function AdminContent() {
   })
   const [projectKpis, setProjectKpis] = useState<any[]>([])
 
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('/api/users')
+      if (res.ok) {
+        const data = await res.json()
+        setUsers(data)
+      }
+    } catch (e) {
+      console.error('Failed to fetch users', e)
+    }
+  }
+
   useEffect(() => {
     Promise.all([
       fetch('/api/projects').then((r) => r.json()),
       fetch('/api/divisions').then((r) => r.json()),
-    ]).then(([p, d]) => {
+      fetch('/api/users').then((r) => r.ok ? r.json() : []),
+    ]).then(([p, d, u]) => {
       setProjects(p)
       setDivisions(d)
+      setUsers(u)
       setLoading(false)
       if (p.length > 0 && !memoForm.projectId) {
         setMemoForm((f) => ({ ...f, projectId: String(p[0].id) }))
@@ -83,6 +103,52 @@ function AdminContent() {
       }
     })
   }, [])
+
+  const submitUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setMessage(null)
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userForm),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to create user')
+      setMessage({ type: 'success', text: `User "${data.name}" added successfully as ${data.role}!` })
+      setUserForm({ name: '', password: '', role: 'Viewer' })
+      fetchUsers()
+    } catch (e: any) {
+      setMessage({ type: 'error', text: e.message })
+    }
+  }
+
+  const updateUserRole = async (userId: number, newRole: string) => {
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      })
+      if (!res.ok) throw new Error('Failed to update user role')
+      setMessage({ type: 'success', text: 'User access role updated successfully!' })
+      fetchUsers()
+    } catch (e: any) {
+      setMessage({ type: 'error', text: e.message })
+    }
+  }
+
+  const deleteUser = async (userId: number, userName: string) => {
+    if (!confirm(`Are you sure you want to remove access for user "${userName}"?`)) return
+    try {
+      const res = await fetch(`/api/users/${userId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete user')
+      setMessage({ type: 'success', text: `User "${userName}" access removed.` })
+      fetchUsers()
+    } catch (e: any) {
+      setMessage({ type: 'error', text: e.message })
+    }
+  }
 
   useEffect(() => {
     if (kpiReadingForm.projectId) {
@@ -278,6 +344,9 @@ function AdminContent() {
           </button>
           <button className={`tab-btn ${activeTab === 'kpi' ? 'active' : ''}`} onClick={() => setActiveTab('kpi')}>
             📊 Record KPI
+          </button>
+          <button className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
+            👥 User Access & Rights
           </button>
         </div>
 
@@ -692,6 +761,124 @@ function AdminContent() {
                   </button>
                 </div>
               </form>
+            )}
+
+            {/* ── USER ACCESS & RIGHTS ─────────────────────────────── */}
+            {activeTab === 'users' && (
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--gray-800)' }}>
+                  ➕ Add New User Account & Assign Rights
+                </h3>
+                <form onSubmit={submitUser} style={{ marginBottom: 32, paddingBottom: 24, borderBottom: '1px solid var(--border)' }}>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label className="form-label">User Name *</label>
+                      <input
+                        className="form-input"
+                        placeholder="e.g. Sron Sreypich"
+                        required
+                        value={userForm.name}
+                        onChange={(e) => setUserForm({ ...userForm, name: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Password *</label>
+                      <input
+                        type="password"
+                        className="form-input"
+                        placeholder="Set account password"
+                        required
+                        value={userForm.password}
+                        onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Access Right / Role *</label>
+                      <select
+                        className="form-select"
+                        value={userForm.role}
+                        onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
+                      >
+                        <option value="Viewer">Viewer (Read-Only Access)</option>
+                        <option value="Editor">Editor (Data Entry & Updates)</option>
+                        <option value="Admin">Admin (Full Control & User Rights)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 20 }}>
+                    <button type="submit" className="btn btn-primary btn-md">
+                      ➕ Add User & Grant Access
+                    </button>
+                  </div>
+                </form>
+
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--gray-800)' }}>
+                  📋 User Directory & Access Rights ({users.length})
+                </h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="data-table" style={{ width: '100%' }}>
+                    <thead>
+                      <tr>
+                        <th>User Name</th>
+                        <th>Access Role</th>
+                        <th>Created Date</th>
+                        <th style={{ textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.length === 0 ? (
+                        <tr>
+                          <td colSpan={4} style={{ textAlign: 'center', padding: 24, color: 'var(--gray-400)' }}>
+                            No users registered yet.
+                          </td>
+                        </tr>
+                      ) : (
+                        users.map((u: any) => (
+                          <tr key={u.id}>
+                            <td style={{ fontWeight: 700, color: 'var(--gray-800)' }}>
+                              👤 {u.name}
+                            </td>
+                            <td>
+                              <select
+                                className="form-select"
+                                value={u.role}
+                                onChange={(e) => updateUserRole(u.id, e.target.value)}
+                                style={{
+                                  padding: '4px 8px',
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  width: 'auto',
+                                  borderRadius: 6,
+                                  background: u.role === 'Admin' ? '#fef3c7' : u.role === 'Editor' ? '#dbeafe' : '#f1f5f9',
+                                  color: u.role === 'Admin' ? '#92400e' : u.role === 'Editor' ? '#1e40af' : '#475569',
+                                  border: '1px solid var(--border)',
+                                }}
+                              >
+                                <option value="Viewer">Viewer</option>
+                                <option value="Editor">Editor</option>
+                                <option value="Admin">Admin</option>
+                              </select>
+                            </td>
+                            <td style={{ fontSize: 12, color: 'var(--gray-500)' }}>
+                              {new Date(u.createdAt).toLocaleDateString()}
+                            </td>
+                            <td style={{ textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => deleteUser(u.id, u.name)}
+                                style={{ color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}
+                              >
+                                🗑️ Remove Access
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </div>
         </div>
