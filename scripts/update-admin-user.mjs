@@ -1,4 +1,4 @@
-// update-admin-user.mjs — updates admin user account to Sron Sreypich in Turso database
+// update-admin-user.mjs — sets Username-based accounts in Turso
 import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -26,24 +26,28 @@ const db = createClient({
 })
 
 async function main() {
-  console.log('👤 Updating Administrator Account in Turso...')
+  console.log('👤 Setting Username-based Administrator & User accounts in Turso...')
   const now = new Date().toISOString()
   const passHash = await bcrypt.hash('Admin@1234', 10)
+  const viewerHash = await bcrypt.hash('Viewer@1234', 10)
 
-  // Update existing admin@onm.com or insert
+  // Sron Sreypich (Admin)
   await db.execute({
-    sql: `UPDATE "User" SET "name" = ?, "passwordHash" = ?, "role" = ? WHERE "email" = ?`,
-    args: ['Sron Sreypich', passHash, 'Admin', 'admin@onm.com'],
+    sql: `INSERT OR REPLACE INTO "User" ("id", "email", "name", "passwordHash", "role", "createdAt", "updatedAt")
+          VALUES (1, 'sronsreypich', 'Sron Sreypich', ?, 'Admin', ?, ?)`,
+    args: [passHash, now, now],
   })
 
-  // Also ensure sreypich@onm.com exists
+  // Viewer User
   await db.execute({
-    sql: `INSERT OR REPLACE INTO "User" ("email", "name", "passwordHash", "role", "createdAt", "updatedAt")
-          VALUES (?, ?, ?, ?, ?, ?)`,
-    args: ['sreypich@onm.com', 'Sron Sreypich', passHash, 'Admin', now, now],
+    sql: `INSERT OR REPLACE INTO "User" ("id", "email", "name", "passwordHash", "role", "createdAt", "updatedAt")
+          VALUES (2, 'vieweruser', 'Viewer User', ?, 'Viewer', ?, ?)`,
+    args: [viewerHash, now, now],
   })
 
-  console.log('  ✅ Admin user set: Sron Sreypich (sreypich@onm.com & admin@onm.com)')
+  console.log('  ✅ Username accounts set:')
+  console.log('     • Username: Sron Sreypich | Password: Admin@1234  | Role: Admin')
+  console.log('     • Username: Viewer User  | Password: Viewer@1234 | Role: Viewer')
 }
 
 main().catch(e => { console.error(e); process.exit(1) })
