@@ -1,12 +1,12 @@
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '@prisma/client'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { createClient } from '@libsql/client'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const dbPath = path.join(__dirname, '..', 'dev.db')
-
-const adapter = new PrismaBetterSqlite3({ url: dbPath })
+const libsql = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+})
+const adapter = new PrismaLibSql(libsql)
 const prisma  = new PrismaClient({ adapter })
 
 const codesToDelete = [

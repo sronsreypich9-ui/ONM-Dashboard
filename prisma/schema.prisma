@@ -1,8 +1,9 @@
 // ONM Energy — VP Dashboard Prisma Schema
-// Stack: SQLite (local-first)
+// Stack: Turso (libSQL cloud — Vercel compatible)
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {

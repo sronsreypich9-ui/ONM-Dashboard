@@ -1,13 +1,16 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '@prisma/client'
-import path from 'path'
+import { createClient } from '@libsql/client'
 
 function getPrisma() {
-  const dbPath = path.join(process.cwd(), 'dev.db')
-  const adapter = new PrismaBetterSqlite3({ url: dbPath })
+  const libsql = createClient({
+    url: process.env.TURSO_DATABASE_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN,
+  })
+  const adapter = new PrismaLibSql(libsql)
   return new PrismaClient({ adapter })
 }
 
