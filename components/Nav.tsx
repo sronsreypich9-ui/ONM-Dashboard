@@ -21,7 +21,7 @@ export function Nav() {
   const { data: session } = useSession()
   const [collapsed, setCollapsed]    = useState(false)
   const [presenting,  setPresenting]  = useState(false)
-  const [showLogout,  setShowLogout]  = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   const user = session?.user as any
 
@@ -152,7 +152,7 @@ export function Nav() {
         </button>
       </div>
 
-      {/* User Profile Card & Direct Sign Out */}
+      {/* Discord-Style User Profile Bar */}
       <div style={{
         margin: '8px',
         borderRadius: 10,
@@ -166,16 +166,27 @@ export function Nav() {
           gap: 10,
           marginBottom: 8,
         }}>
-          {/* Avatar */}
-          <div style={{
-            width: 34, height: 34, borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontWeight: 800, fontSize: 12,
-            flexShrink: 0,
-          }}>
-            {initials}
+          {/* Avatar with Discord Online Green Dot */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #5865F2, #0284c7)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'white', fontWeight: 800, fontSize: 13,
+            }}>
+              {initials}
+            </div>
+            {/* Status Dot */}
+            <div
+              title="Online"
+              style={{
+                position: 'absolute', bottom: -1, right: -1,
+                width: 11, height: 11, borderRadius: '50%',
+                background: '#23a55a', border: '2px solid white',
+              }}
+            />
           </div>
+
           <div className="user-details-text" style={{ flex: 1, minWidth: 0 }}>
             <div style={{
               fontSize: 12.5, fontWeight: 700, color: 'var(--gray-800)',
@@ -183,9 +194,10 @@ export function Nav() {
             }}>
               {user?.name || 'Sron Sreypich'}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 1 }}>
+              <span style={{ fontSize: 10, color: 'var(--gray-500)', fontWeight: 600 }}>#2026</span>
               <span style={{
-                fontSize: 10, fontWeight: 700, padding: '1px 6px',
+                fontSize: 9.5, fontWeight: 700, padding: '1px 5px',
                 borderRadius: 4, background: roleBadge.bg, color: roleBadge.color,
               }}>
                 {roleBadge.label}
@@ -194,9 +206,9 @@ export function Nav() {
           </div>
         </div>
 
-        {/* Direct Sign Out Button */}
+        {/* Log Out Button */}
         <button
-          onClick={handleLogout}
+          onClick={() => setShowLogoutModal(true)}
           title="Sign Out of Dashboard"
           style={{
             width: '100%', padding: '7px 10px',
@@ -213,7 +225,7 @@ export function Nav() {
           onMouseEnter={(e) => (e.currentTarget.style.background = '#fee2e2')}
           onMouseLeave={(e) => (e.currentTarget.style.background = '#fef2f2')}
         >
-          🚪 <span className="nav-text">Sign Out</span>
+          🚪 <span className="nav-text">Log Out</span>
         </button>
       </div>
 
@@ -221,6 +233,61 @@ export function Nav() {
       <div className="sidebar-footer" style={{ paddingTop: 8 }}>
         <div>ONM BU Dashboard · VP Office · {new Date().getFullYear()}</div>
       </div>
+
+      {/* Discord-Style Log Out Confirmation Modal */}
+      {showLogoutModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0, 0, 0, 0.75)', backdropFilter: 'blur(4px)',
+          zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#313338', borderRadius: 14, maxWidth: 420, width: '100%',
+            padding: '24px 24px 20px 24px', boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
+            border: '1px solid #2b2d31', color: '#f2f3f5', fontFamily: "'gg sans', sans-serif",
+          }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#f2f3f5', margin: '0 0 10px 0' }}>
+              Log Out
+            </h2>
+            <p style={{ fontSize: 13.5, color: '#dbdee1', lineHeight: 1.5, margin: '0 0 24px 0' }}>
+              Are you sure you want to log out of <strong>ONM Energy VP Office Dashboard</strong>?
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                style={{
+                  background: 'none', border: 'none', color: 'white',
+                  fontSize: 13, fontWeight: 600, padding: '10px 20px',
+                  borderRadius: 6, cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  background: '#da373c', color: 'white', border: 'none',
+                  padding: '10px 24px', borderRadius: 6, fontSize: 13.5,
+                  fontWeight: 700, cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(218, 55, 60, 0.4)',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#a1282c')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = '#da373c')}
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
