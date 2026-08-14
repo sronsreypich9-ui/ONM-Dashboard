@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
+import { invalidateCache } from '@/lib/useDataCache'
 
 const navItems = [
   { href: '/',             label: 'Project Overview',   icon: '📊', section: 'MAIN' },
@@ -68,6 +69,7 @@ export function Nav() {
   }
 
   const handleLogout = async () => {
+    invalidateCache()
     await signOut({ callbackUrl: '/login', redirect: true })
   }
 
