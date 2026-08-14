@@ -99,11 +99,15 @@ input, select, textarea { font-family: inherit; }
   flex: 1;
   margin-left: var(--nav-width);
   min-height: 100vh;
-  transition: margin-left 0.3s ease;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-content.presentation-mode {
   margin-left: 0;
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 68px;
 }
 
 .page-container {
@@ -126,10 +130,39 @@ input, select, textarea { font-family: inherit; }
   flex-direction: column;
   z-index: 100;
   overflow-y: auto;
-  transition: transform 0.3s ease;
+  overflow-x: hidden;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar.hidden { transform: translateX(-100%); }
+
+.sidebar.collapsed {
+  width: 68px;
+}
+
+.sidebar.collapsed .sidebar-logo {
+  padding: 16px 12px;
+  justify-content: center;
+}
+
+.sidebar.collapsed .logo-text,
+.sidebar.collapsed .nav-section-label,
+.sidebar.collapsed .sidebar-footer,
+.sidebar.collapsed .user-details-text,
+.sidebar.collapsed .user-arrow {
+  display: none !important;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 10px 0;
+  width: 44px;
+  margin: 4px auto;
+}
+
+.sidebar.collapsed .nav-item span.nav-text {
+  display: none !important;
+}
 
 .sidebar-logo {
   padding: 20px 20px 16px;
