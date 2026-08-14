@@ -1,16 +1,9 @@
 /**
- * ONM Energy — Automatic Discord Bot Listener
+ * ONM Energy — Silent Automatic Discord Listener
  *
- * This script runs in the background and listens to your Discord server.
- * Whenever messages are posted in monitored channels, it automatically:
- * 1. Collects discussion context.
- * 2. Runs the AI analysis engine.
- * 3. Categorizes alert level (🟢 Normal, 🟡 Attention Needed, 🔴 Critical).
- * 4. Saves the recap directly into your VP Dashboard database!
- *
- * Instructions:
- * 1. Set DISCORD_BOT_TOKEN="your_bot_token" in .env
- * 2. Run: node scripts/discord-bot.mjs
+ * This script runs silently in the background. It reads incoming Discord messages
+ * across monitored channels, runs the AI analysis engine, and saves recaps directly
+ * to your VP Dashboard without sending any reply messages inside Discord.
  */
 
 import { Client, GatewayIntentBits } from 'discord.js'
@@ -19,7 +12,7 @@ const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN
 const DASHBOARD_API = process.env.NEXTAUTH_URL || 'https://onm-dashboard.vercel.app'
 
 if (!BOT_TOKEN) {
-  console.log('ℹ️  DISCORD_BOT_TOKEN not set in environment. Set token to launch automatic Discord listener.')
+  console.log('ℹ️  DISCORD_BOT_TOKEN not set in environment. Set token to launch silent listener.')
 } else {
   const client = new Client({
     intents: [
@@ -30,42 +23,42 @@ if (!BOT_TOKEN) {
   })
 
   client.on('ready', () => {
-    console.log(`🤖 ONM Discord Bot logged in as ${client.user?.tag}!`)
-    console.log('📡 Listening to all server text channels for automatic thread recaps…')
+    console.log(`🤖 ONM Silent Discord Bot logged in as ${client.user?.tag}!`)
+    console.log('📡 Silent Read-Only Mode Active: Listening to text channels & generating recaps on VP Dashboard…')
   })
 
   client.on('messageCreate', async (message) => {
+    // Ignore bot messages
     if (message.author.bot) return
 
-    // Trigger on explicit command or keyword trigger
-    if (message.content.startsWith('!recap') || message.content.includes('@VP-Alert')) {
-      try {
-        console.log(`⚡ Auto-analyzing thread from #${message.channel.name}…`)
-        const channelName = `#${message.channel.name}`
-        const threadTitle = message.cleanContent.replace('!recap', '').trim() || `Discussion in ${channelName}`
+    try {
+      const channelName = `#${message.channel.name}`
+      const threadTitle = message.cleanContent.slice(0, 80) || `Discussion in ${channelName}`
 
-        // Fetch last 10 messages for context
-        const fetched = await message.channel.messages.fetch({ limit: 10 })
-        const rawMessages = fetched.map((m) => `[${m.createdAt.toLocaleTimeString()}] @${m.author.username}: ${m.cleanContent}`).reverse().join('\n')
+      // Fetch last 8 messages for context
+      const fetched = await message.channel.messages.fetch({ limit: 8 })
+      const rawMessages = fetched
+        .map((m) => `[${m.createdAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}] @${m.author.username}: ${m.cleanContent}`)
+        .reverse()
+        .join('\n')
 
-        const res = await fetch(`${DASHBOARD_API}/api/discord-recap/analyze`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            threadTitle,
-            channelName,
-            rawMessages,
-            threadUrl: message.url,
-          }),
-        })
+      console.log(`⚡ Silent Auto-Analysis for ${channelName}…`)
 
-        if (res.ok) {
-          const data = await res.json()
-          await message.reply(`✅ **AI Executive Briefing Generated!**\nAlert Level: **${data.alertLevel}**\nView on VP Dashboard: ${DASHBOARD_API}/discord-recap`)
-        }
-      } catch (err) {
-        console.error('Error analyzing message:', err)
-      }
+      // Send to AI engine (Silent DB creation, ZERO Discord reply)
+      await fetch(`${DASHBOARD_API}/api/discord-recap/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          threadTitle,
+          channelName,
+          rawMessages,
+          threadUrl: message.url,
+        }),
+      })
+
+      // NOTE: Zero message.reply() call — completely silent in Discord chat!
+    } catch (err) {
+      console.error('Error analyzing message:', err)
     }
   })
 
