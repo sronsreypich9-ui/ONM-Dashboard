@@ -216,14 +216,15 @@ export default function DiscordRecapPage() {
 
   return (
     <div className="page-container">
-      {/* Header Banner */}
+      {/* Header Banner — Baby Pink Theme */}
       <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        color: 'white',
+        background: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
+        color: '#831843',
         borderRadius: 16,
         padding: '24px 28px',
         marginBottom: 24,
-        boxShadow: 'var(--shadow)',
+        border: '1px solid #f472b6',
+        boxShadow: '0 4px 14px rgba(244, 114, 182, 0.15)',
         position: 'relative',
         overflow: 'hidden',
       }}>
@@ -231,14 +232,14 @@ export default function DiscordRecapPage() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <span style={{ fontSize: 24 }}>💬</span>
-              <h1 style={{ fontFamily: 'var(--font-head)', fontSize: 22, fontWeight: 800, color: 'white', margin: 0 }}>
+              <h1 style={{ fontFamily: 'var(--font-head)', fontSize: 22, fontWeight: 800, color: '#831843', margin: 0 }}>
                 Discord AI Recap & Management Alerts
               </h1>
-              <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', border: '1px solid rgba(96, 165, 250, 0.3)', padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}>
+              <span style={{ background: '#fbcfe8', color: '#9d174d', border: '1px solid #f472b6', padding: '2px 9px', borderRadius: 6, fontSize: 10, fontWeight: 800 }}>
                 AI Engine Active
               </span>
             </div>
-            <p style={{ color: '#94a3b8', fontSize: 13.5, margin: 0, maxWidth: 750 }}>
+            <p style={{ color: '#9d174d', fontSize: 13.5, margin: 0, maxWidth: 750, fontWeight: 500 }}>
               AI-powered analysis of Discord site discussion threads, automatic technical issue detection, and 1-click executive escalation to project registers.
             </p>
           </div>
@@ -246,11 +247,11 @@ export default function DiscordRecapPage() {
           <button
             onClick={() => setShowModal(true)}
             style={{
-              background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))',
+              background: 'linear-gradient(135deg, #ec4899, #db2777)',
               color: 'white', border: 'none', borderRadius: 10,
               padding: '10px 18px', fontWeight: 700, fontSize: 13.5,
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
-              boxShadow: '0 4px 12px rgba(15, 118, 110, 0.3)',
+              boxShadow: '0 4px 12px rgba(236, 72, 153, 0.35)',
             }}
           >
             <span>🤖</span> Analyze New Thread / Webhook
@@ -258,26 +259,26 @@ export default function DiscordRecapPage() {
         </div>
 
         {/* Quick Stats Counter Bar */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: '10px 14px' }}>
-            <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>TOTAL THREADS ANALYZED</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: 'white', marginTop: 2 }}>{recaps.length}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 20, paddingTop: 16, borderTop: '1px solid #f472b6' }}>
+          <div style={{ background: 'white', borderRadius: 10, padding: '10px 14px', border: '1px solid #fbcfe8' }}>
+            <div style={{ fontSize: 11, color: '#9d174d', fontWeight: 700 }}>TOTAL THREADS ANALYZED</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#831843', marginTop: 2 }}>{recaps.length}</div>
           </div>
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', borderRadius: 10, padding: '10px 14px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-            <div style={{ fontSize: 11, color: '#fca5a5', fontWeight: 600 }}>CRITICAL ALERTS</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: '#ef4444', marginTop: 2 }}>
+          <div style={{ background: '#fef2f2', borderRadius: 10, padding: '10px 14px', border: '1px solid #fecaca' }}>
+            <div style={{ fontSize: 11, color: '#dc2626', fontWeight: 700 }}>CRITICAL ALERTS</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#dc2626', marginTop: 2 }}>
               {recaps.filter((r) => r.alertLevel === 'Critical').length}
             </div>
           </div>
-          <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderRadius: 10, padding: '10px 14px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-            <div style={{ fontSize: 11, color: '#fde68a', fontWeight: 600 }}>ATTENTION NEEDED</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: '#f59e0b', marginTop: 2 }}>
+          <div style={{ background: '#fffbeb', borderRadius: 10, padding: '10px 14px', border: '1px solid #fde68a' }}>
+            <div style={{ fontSize: 11, color: '#b45309', fontWeight: 700 }}>ATTENTION NEEDED</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#d97706', marginTop: 2 }}>
               {recaps.filter((r) => r.alertLevel === 'Attention').length}
             </div>
           </div>
-          <div style={{ background: 'rgba(34, 197, 94, 0.1)', borderRadius: 10, padding: '10px 14px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-            <div style={{ fontSize: 11, color: '#86efac', fontWeight: 600 }}>NORMAL LOGS</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: '#22c55e', marginTop: 2 }}>
+          <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '10px 14px', border: '1px solid #bbf7d0' }}>
+            <div style={{ fontSize: 11, color: '#15803d', fontWeight: 700 }}>NORMAL LOGS</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#16a34a', marginTop: 2 }}>
               {recaps.filter((r) => r.alertLevel === 'Normal').length}
             </div>
           </div>
