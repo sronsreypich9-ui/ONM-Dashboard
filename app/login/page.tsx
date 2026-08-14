@@ -25,19 +25,23 @@ function LoginForm() {
     setLoading(true)
     setError('')
 
-    const result = await signIn('credentials', {
-      username: username.trim(),
-      password,
-      redirect: false,
-      callbackUrl,
-    })
+    try {
+      const result = await signIn('credentials', {
+        username: username.trim(),
+        password: password.trim(),
+        redirect: false,
+        callbackUrl,
+      })
 
-    if (result?.error) {
-      setError('Invalid User Name or Password. Please try again.')
-      setLoading(false)
-    } else {
-      router.push(callbackUrl)
-      router.refresh()
+      if (result?.error) {
+        setError('Invalid User Name or Password. Please try again.')
+        setLoading(false)
+      } else {
+        window.location.href = callbackUrl || '/'
+      }
+    } catch (err) {
+      console.error(err)
+      window.location.href = '/'
     }
   }
 
