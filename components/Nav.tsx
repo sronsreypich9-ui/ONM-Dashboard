@@ -68,11 +68,7 @@ export function Nav() {
   }
 
   const handleLogout = async () => {
-    if (session) {
-      await signOut({ callbackUrl: '/' })
-    } else {
-      router.push('/')
-    }
+    await signOut({ callbackUrl: '/login', redirect: true })
   }
 
   // Role badge color
@@ -154,29 +150,20 @@ export function Nav() {
         </button>
       </div>
 
-      {/* User profile section */}
+      {/* User Profile Card & Direct Sign Out */}
       <div style={{
         margin: '8px',
         borderRadius: 10,
         border: '1px solid var(--border)',
         background: 'var(--gray-50)',
-        overflow: 'hidden',
+        padding: '10px 10px',
       }}>
-        <button
-          onClick={() => setShowLogout((v) => !v)}
-          title={user?.name || 'Sron Sreypich'}
-          style={{
-            width: '100%',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '10px 12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            textAlign: 'left',
-          }}
-        >
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          marginBottom: 8,
+        }}>
           {/* Avatar */}
           <div style={{
             width: 34, height: 34, borderRadius: '50%',
@@ -203,37 +190,29 @@ export function Nav() {
               </span>
             </div>
           </div>
-          <span className="user-arrow" style={{
-            fontSize: 11, color: 'var(--gray-400)',
-            transform: showLogout ? 'rotate(180deg)' : 'rotate(0)',
-            transition: 'transform 0.2s',
-          }}>▼</span>
-        </button>
+        </div>
 
-        {/* Logout panel */}
-        {showLogout && (
-          <div style={{ borderTop: '1px solid var(--border)', padding: '6px 8px' }}>
-            <button
-              onClick={handleLogout}
-              style={{
-                width: '100%', padding: '8px 12px',
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: 7,
-                color: '#dc2626',
-                fontSize: 12.5, fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 6,
-                justifyContent: 'center',
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = '#fee2e2')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = '#fef2f2')}
-            >
-              🚪 Sign Out
-            </button>
-          </div>
-        )}
+        {/* Direct Sign Out Button */}
+        <button
+          onClick={handleLogout}
+          title="Sign Out of Dashboard"
+          style={{
+            width: '100%', padding: '7px 10px',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: 7,
+            color: '#dc2626',
+            fontSize: 12, fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 6,
+            justifyContent: 'center',
+            transition: 'background 0.15s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = '#fee2e2')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = '#fef2f2')}
+        >
+          🚪 <span className="nav-text">Sign Out</span>
+        </button>
       </div>
 
       {/* Footer */}
