@@ -133,6 +133,7 @@ export function Nav() {
                 key={item.href}
                 className={`nav-item ${pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) ? 'active' : ''}`}
                 onClick={() => router.push(item.href)}
+                onMouseEnter={() => router.prefetch(item.href)}
                 title={item.label}
               >
                 <span style={{ fontSize: 15 }}>{item.icon}</span>

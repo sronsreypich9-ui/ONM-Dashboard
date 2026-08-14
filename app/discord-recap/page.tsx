@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useCachedData } from '@/lib/useDataCache'
 
 interface Project {
   id: number
@@ -33,46 +34,31 @@ interface DiscordRecap {
 }
 
 export default function DiscordRecapPage() {
-  const [recaps, setRecaps] = useState<DiscordRecap[]>([])
+  const { data: recapsData, loading: recapsLoading } = useCachedData<DiscordRecap[]>('/api/discord-recap')
+  const { data: projectsData } = useCachedData<Project[]>('/api/projects')
+
+  const recaps = recapsData || []
+  const projects = projectsData || []
+  const loading = recapsLoading && !recapsData
+
   const [selectedRecap, setSelectedRecap] = useState<DiscordRecap | null>(null)
-  const [loading, setLoading] = useState(true)
   const [alertFilter, setAlertFilter] = useState<string>('All')
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [projects, setProjects] = useState<Project[]>([])
 
   // Modal Form State
   const [formTitle, setFormTitle] = useState('')
   const [formChannel, setFormChannel] = useState('#opv-site-updates')
+  const [formUrl, setFormUrl] = useState('')
   const [formTranscript, setFormTranscript] = useState('')
   const [analyzing, setAnalyzing] = useState(false)
   const [actionStatus, setActionStatus] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchRecaps()
-    fetch('/api/projects')
-      .then((r) => r.json())
-      .then((data) => setProjects(Array.isArray(data) ? data : []))
-      .catch(() => {})
-  }, [])
-
-  const fetchRecaps = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch('/api/discord-recap')
-      const data = await res.json()
-      if (Array.isArray(data)) {
-        setRecaps(data)
-        if (data.length > 0 && !selectedRecap) {
-          setSelectedRecap(data[0])
-        }
-      }
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
+    if (recaps.length > 0 && !selectedRecap) {
+      setSelectedRecap(recaps[0])
     }
-  }
+  }, [recaps, selectedRecap])
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,15 +71,16 @@ export default function DiscordRecapPage() {
         body: JSON.stringify({
           threadTitle: formTitle,
           channelName: formChannel,
+          threadUrl: formUrl || null,
           rawMessages: formTranscript,
         }),
       })
       const newRecap = await res.json()
       if (res.ok) {
-        setRecaps((prev) => [newRecap, ...prev])
         setSelectedRecap(newRecap)
         setShowModal(false)
         setFormTitle('')
+        setFormUrl('')
         setFormTranscript('')
       }
     } catch (err) {
@@ -123,7 +110,6 @@ export default function DiscordRecapPage() {
           type: 'issue',
         }),
       })
-      const result = await res.json()
       if (res.ok) {
         setActionStatus('✅ Created Official Issue & Updated Project Status!')
         setTimeout(() => setActionStatus(null), 4000)
@@ -627,6 +613,17 @@ export default function DiscordRecapPage() {
                   placeholder="#opv-site-updates"
                   value={formChannel}
                   onChange={(e) => setFormChannel(e.target.value)}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-700)', display: 'block', marginBottom: 4 }}>Discord Thread / Message Link (Optional)</label>
+                <input
+                  type="url"
+                  placeholder="https://discord.com/channels/1092839281/1192838192/1293819283"
+                  value={formUrl}
+                  onChange={(e) => setFormUrl(e.target.value)}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13 }}
                 />
               </div>

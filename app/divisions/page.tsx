@@ -9,16 +9,13 @@ function worstRag(rags: string[]): string {
   return 'Green'
 }
 
+import { useCachedData } from '@/lib/useDataCache'
+
 export default function DivisionsPage() {
   const router = useRouter()
-  const [divisions, setDivisions] = useState<any[]>([])
-  const [loading, setLoading]     = useState(true)
-
-  useEffect(() => {
-    fetch('/api/divisions')
-      .then((r) => r.json())
-      .then((d) => { setDivisions(d); setLoading(false) })
-  }, [])
+  const { data: divisionsData, loading: divLoading } = useCachedData<any[]>('/api/divisions')
+  const divisions = divisionsData || []
+  const loading   = divLoading && !divisionsData
 
   return (
     <>

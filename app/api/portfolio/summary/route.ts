@@ -54,17 +54,24 @@ export async function GET() {
       divisionMap[p.divisionId].rags.push(p.statusRag)
     }
 
-    return NextResponse.json({
-      total,
-      byRag,
-      highSeverityIssues,
-      overdueActions,
-      vpAttentionProjects,
-      divisionSummary: Object.values(divisionMap),
-      totalCapacityMw,
-      codOperatingCount,
-      underConstructionCount,
-    })
+    return NextResponse.json(
+      {
+        total,
+        byRag,
+        highSeverityIssues,
+        overdueActions,
+        vpAttentionProjects,
+        divisionSummary: Object.values(divisionMap),
+        totalCapacityMw,
+        codOperatingCount,
+        underConstructionCount,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=30',
+        },
+      }
+    )
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch summary' }, { status: 500 })
   }

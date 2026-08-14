@@ -33,11 +33,14 @@ function worstRag(rags: string[]): string {
   return 'Green'
 }
 
+import { useCachedData } from '@/lib/useDataCache'
+
 export default function PortfolioOverviewPage() {
   const router = useRouter()
-  const [summary, setSummary]     = useState<PortfolioSummary | null>(null)
-  const [divisions, setDivisions] = useState<Division[]>([])
-  const [loading, setLoading]     = useState(true)
+  const { data: summary, loading: summaryLoading } = useCachedData<PortfolioSummary>('/api/portfolio/summary')
+  const { data: divisionsData, loading: divLoading } = useCachedData<Division[]>('/api/divisions')
+  const divisions = divisionsData || []
+  const loading = summaryLoading && !summary
   const [nowStr, setNowStr]       = useState('')
 
   useEffect(() => {
@@ -45,17 +48,6 @@ export default function PortfolioOverviewPage() {
     update()
     const t = setInterval(update, 30000)
     return () => clearInterval(t)
-  }, [])
-
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/portfolio/summary').then((r) => r.json()),
-      fetch('/api/divisions').then((r) => r.json()),
-    ]).then(([s, d]) => {
-      setSummary(s)
-      setDivisions(d)
-      setLoading(false)
-    })
   }, [])
 
   if (loading) {

@@ -3,32 +3,29 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+import { useCachedData } from '@/lib/useDataCache'
+
 function ProjectsContent() {
   const router       = useRouter()
   const searchParams = useSearchParams()
-  const [projects, setProjects]   = useState<any[]>([])
-  const [divisions, setDivisions] = useState<any[]>([])
-  const [loading, setLoading]     = useState(true)
   const [filters, setFilters]     = useState({
     divisionId: searchParams.get('divisionId') || '',
     rag:        '',
     q:          '',
   })
 
-  useEffect(() => {
-    fetch('/api/divisions').then((r) => r.json()).then(setDivisions)
-  }, [])
+  const queryUrl = `/api/projects?${new URLSearchParams({
+    ...(filters.divisionId ? { divisionId: filters.divisionId } : {}),
+    ...(filters.rag ? { rag: filters.rag } : {}),
+    ...(filters.q ? { q: filters.q } : {}),
+  }).toString()}`
 
-  useEffect(() => {
-    setLoading(true)
-    const params = new URLSearchParams()
-    if (filters.divisionId) params.set('divisionId', filters.divisionId)
-    if (filters.rag)        params.set('rag', filters.rag)
-    if (filters.q)          params.set('q', filters.q)
-    fetch(`/api/projects?${params.toString()}`)
-      .then((r) => r.json())
-      .then((d) => { setProjects(d); setLoading(false) })
-  }, [filters])
+  const { data: projectsData, loading: projLoading } = useCachedData<any[]>(queryUrl)
+  const { data: divisionsData } = useCachedData<any[]>('/api/divisions')
+
+  const projects  = projectsData || []
+  const divisions = divisionsData || []
+  const loading   = projLoading && !projectsData
 
   const now = new Date()
 
