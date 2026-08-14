@@ -21,8 +21,22 @@ export default withAuth(
         ) {
           return true
         }
-        // Strict guard: require active token for all app routes
-        return !!token
+
+        // Must have valid token
+        if (!token) return false
+
+        const role = (token as any).role || 'Viewer'
+
+        // Strict RBAC URL guards
+        if (path.startsWith('/import') && role !== 'Admin') {
+          return false // Restrict /import to Admin only
+        }
+
+        if (path.startsWith('/admin') && role === 'Viewer') {
+          return false // Restrict /admin data entry from Viewers
+        }
+
+        return true
       },
     },
     pages: {

@@ -85,7 +85,19 @@ export function Nav() {
     ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
     : 'SS'
 
-  const sections = ['MAIN', 'MANAGE']
+  const userRole = user?.role || 'Admin'
+
+  const visibleNavItems = navItems.filter((item) => {
+    if (userRole === 'Viewer') {
+      return item.section === 'MAIN'
+    }
+    if (userRole === 'Editor') {
+      return item.href !== '/import'
+    }
+    return true
+  })
+
+  const sections = Array.from(new Set(visibleNavItems.map((i) => i.section)))
 
   return (
     <nav className={`sidebar ${collapsed ? 'collapsed' : ''}`} id="sidebar">
@@ -121,12 +133,12 @@ export function Nav() {
         </button>
       </div>
 
-      {/* Nav items */}
+      {/* Nav items filtered by Access Rights */}
       <div className="sidebar-nav">
         {sections.map((section) => (
           <div key={section}>
             <div className="nav-section-label">{section}</div>
-            {navItems.filter((i) => i.section === section).map((item) => (
+            {visibleNavItems.filter((i) => i.section === section).map((item) => (
               <button
                 key={item.href}
                 className={`nav-item ${pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) ? 'active' : ''}`}
