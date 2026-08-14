@@ -10,31 +10,15 @@ function LoginForm() {
   const callbackUrl  = searchParams.get('callbackUrl') || '/'
   const errorParam   = searchParams.get('error')
 
-  const [username, setUsername] = useState('admin@onm.com')
+  const [username, setUsername] = useState('Sron Sreypich')
   const [password, setPassword] = useState('Admin@1234')
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
   const [showPw,   setShowPw]   = useState(false)
-  const [selectedRole, setSelectedRole] = useState<'Admin' | 'Editor' | 'Viewer'>('Admin')
 
   useEffect(() => {
     if (errorParam) setError('Invalid credentials or session expired. Please log in again.')
   }, [errorParam])
-
-  const selectRolePreset = (role: 'Admin' | 'Editor' | 'Viewer') => {
-    setSelectedRole(role)
-    setError('')
-    if (role === 'Admin') {
-      setUsername('admin@onm.com')
-      setPassword('Admin@1234')
-    } else if (role === 'Editor') {
-      setUsername('editor@onm.com')
-      setPassword('Editor@1234')
-    } else {
-      setUsername('viewer@onm.com')
-      setPassword('Viewer@1234')
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -94,73 +78,21 @@ function LoginForm() {
         {/* Left Column: Form Section */}
         <div style={{ padding: '36px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           {/* Header text */}
-          <div style={{ textAlign: 'center', marginBottom: 22 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#f2f3f5', margin: 0, letterSpacing: '-0.3px' }}>
-              Welcome back!
-            </h1>
-            <p style={{ fontSize: 13.5, color: '#b5bac1', marginTop: 4, margin: 0 }}>
-              We're so excited to see you again!
-            </p>
-          </div>
-
-          {/* Quick Role Selection Pills */}
-          <div style={{ marginBottom: 18 }}>
-            <label style={{ fontSize: 11, fontWeight: 800, color: '#b5bac1', textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 8 }}>
-              Account Access Role:
-            </label>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-              {/* Admin */}
-              <button
-                type="button"
-                onClick={() => selectRolePreset('Admin')}
-                style={{
-                  padding: '9px 6px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
-                  background: selectedRole === 'Admin' ? 'rgba(88, 101, 242, 0.2)' : '#2b2d31',
-                  border: selectedRole === 'Admin' ? '2px solid #5865F2' : '1px solid #1e1f22',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div style={{ fontSize: 15 }}>👑</div>
-                <div style={{ fontSize: 11.5, fontWeight: 800, color: selectedRole === 'Admin' ? '#5865F2' : '#dbdee1', marginTop: 2 }}>
-                  VP Admin
-                </div>
-              </button>
-
-              {/* Editor */}
-              <button
-                type="button"
-                onClick={() => selectRolePreset('Editor')}
-                style={{
-                  padding: '9px 6px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
-                  background: selectedRole === 'Editor' ? 'rgba(59, 130, 246, 0.2)' : '#2b2d31',
-                  border: selectedRole === 'Editor' ? '2px solid #3b82f6' : '1px solid #1e1f22',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div style={{ fontSize: 15 }}>✏️</div>
-                <div style={{ fontSize: 11.5, fontWeight: 800, color: selectedRole === 'Editor' ? '#60a5fa' : '#dbdee1', marginTop: 2 }}>
-                  Editor
-                </div>
-              </button>
-
-              {/* Viewer */}
-              <button
-                type="button"
-                onClick={() => selectRolePreset('Viewer')}
-                style={{
-                  padding: '9px 6px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
-                  background: selectedRole === 'Viewer' ? 'rgba(148, 163, 184, 0.2)' : '#2b2d31',
-                  border: selectedRole === 'Viewer' ? '2px solid #94a3b8' : '1px solid #1e1f22',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div style={{ fontSize: 15 }}>👁️</div>
-                <div style={{ fontSize: 11.5, fontWeight: 800, color: selectedRole === 'Viewer' ? '#cbd5e1' : '#dbdee1', marginTop: 2 }}>
-                  Viewer
-                </div>
-              </button>
+          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'rgba(88, 101, 242, 0.15)', border: '1px solid #5865F2',
+              color: '#5865F2', padding: '4px 12px', borderRadius: 20,
+              fontSize: 11.5, fontWeight: 800, marginBottom: 12,
+            }}>
+              👑 VP Executive Portal
             </div>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#f2f3f5', margin: 0, letterSpacing: '-0.3px' }}>
+              Welcome back, Sron Sreypich!
+            </h1>
+            <p style={{ fontSize: 13, color: '#b5bac1', marginTop: 4, margin: 0 }}>
+              Enter password to access ONM BU Dashboard
+            </p>
           </div>
 
           {/* Error Message */}
@@ -179,13 +111,13 @@ function LoginForm() {
             {/* User Name */}
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#b5bac1', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.6px' }}>
-                Email or User Name <span style={{ color: '#ed4245' }}>*</span>
+                User Name / Email <span style={{ color: '#ed4245' }}>*</span>
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="user@onm.com"
+                placeholder="Sron Sreypich"
                 required
                 style={{
                   width: '100%', padding: '10px 12px',
@@ -243,12 +175,12 @@ function LoginForm() {
               onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = '#4752C4' }}
               onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = '#5865F2' }}
             >
-              {loading ? 'Logging in…' : `Log In as ${selectedRole}`}
+              {loading ? 'Authenticating…' : '🔐 Log In as Sron Sreypich (VP Admin)'}
             </button>
           </form>
 
-          <div style={{ marginTop: 16, fontSize: 12, color: '#949ba4', textAlign: 'left' }}>
-            Need an account? <span style={{ color: '#00a8fc', fontWeight: 600, cursor: 'pointer' }}>Contact VP Administrator</span>
+          <div style={{ marginTop: 18, fontSize: 11.5, color: '#949ba4', textAlign: 'center' }}>
+            🔒 Authenticated VP Session · Admin Permissions Active
           </div>
         </div>
 
@@ -287,7 +219,7 @@ function LoginForm() {
               <rect x="24" y="48" width="8" height="8" />
               <rect x="38" y="38" width="12" height="12" fill="#5865F2" />
               <rect x="54" y="38" width="8" height="8" />
-              <rect x="68" y="38" width="12" height="12" />
+              <rect x="68" y="12" width="12" height="12" />
               <rect x="84" y="48" width="8" height="8" />
               <rect x="38" y="60" width="8" height="8" />
               <rect x="54" y="60" width="12" height="12" fill="#0f766e" />
@@ -312,7 +244,7 @@ function LoginForm() {
             Log in with QR Code
           </h3>
           <p style={{ fontSize: 12.5, color: '#b5bac1', lineHeight: 1.5, margin: 0, maxWidth: 220 }}>
-            Scan this with your mobile camera or tap below for 1-click quick test sign-in!
+            Scan with your phone or tap below for 1-click test sign-in!
           </p>
 
           <button

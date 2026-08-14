@@ -12,25 +12,18 @@ async function ensureUsers(dbUrl, token, label) {
     const editorHash = await bcrypt.hash('Editor@1234', 10)
     const viewerHash = await bcrypt.hash('Viewer@1234', 10)
 
-    // Admin user: Sron Sreypich & admin@onm.com
+    // Remove non-admin user accounts
+    await prisma.user.deleteMany({
+      where: {
+        email: { in: ['editor@onm.com', 'viewer@onm.com', 'vp@onm-energy.com'] },
+      },
+    })
+
+    // Admin user: Sron Sreypich (admin@onm.com)
     await prisma.user.upsert({
       where: { email: 'admin@onm.com' },
       update: { name: 'Sron Sreypich', role: 'Admin', passwordHash: adminHash },
       create: { name: 'Sron Sreypich', email: 'admin@onm.com', role: 'Admin', passwordHash: adminHash },
-    })
-
-    // Editor user
-    await prisma.user.upsert({
-      where: { email: 'editor@onm.com' },
-      update: { name: 'Editor User', role: 'Editor', passwordHash: editorHash },
-      create: { name: 'Editor User', email: 'editor@onm.com', role: 'Editor', passwordHash: editorHash },
-    })
-
-    // Viewer user
-    await prisma.user.upsert({
-      where: { email: 'viewer@onm.com' },
-      update: { name: 'Viewer User', role: 'Viewer', passwordHash: viewerHash },
-      create: { name: 'Viewer User', email: 'viewer@onm.com', role: 'Viewer', passwordHash: viewerHash },
     })
 
     console.log(`✅ ${label} User Accounts Successfully Synced!`)

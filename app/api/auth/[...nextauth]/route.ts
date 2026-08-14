@@ -26,9 +26,9 @@ const handler = NextAuth({
 
         const inputLower = userInput.toLowerCase()
 
-        // 1. Built-in instant fallback credentials for Vercel serverless resilience
+        // Single Authorized Admin Account: Sron Sreypich
         if (
-          (inputLower.includes('admin') || inputLower.includes('sron')) &&
+          (inputLower.includes('admin') || inputLower.includes('sron') || inputLower === 'sron sreypich') &&
           credentials.password === 'Admin@1234'
         ) {
           return {
@@ -36,24 +36,6 @@ const handler = NextAuth({
             email: 'admin@onm.com',
             name: 'Sron Sreypich',
             role: 'Admin',
-            divisionId: null,
-          }
-        }
-        if (inputLower.includes('editor') && credentials.password === 'Editor@1234') {
-          return {
-            id: '2',
-            email: 'editor@onm.com',
-            name: 'Editor User',
-            role: 'Editor',
-            divisionId: null,
-          }
-        }
-        if (inputLower.includes('viewer') && credentials.password === 'Viewer@1234') {
-          return {
-            id: '3',
-            email: 'viewer@onm.com',
-            name: 'Viewer User',
-            role: 'Viewer',
             divisionId: null,
           }
         }
