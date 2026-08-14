@@ -10,7 +10,7 @@ function LoginForm() {
   const callbackUrl  = searchParams.get('callbackUrl') || '/'
   const errorParam   = searchParams.get('error')
 
-  const [username, setUsername] = useState('Sron Sreypich')
+  const [username, setUsername] = useState('admin@onm.com')
   const [password, setPassword] = useState('Admin@1234')
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
@@ -25,13 +25,13 @@ function LoginForm() {
     setSelectedRole(role)
     setError('')
     if (role === 'Admin') {
-      setUsername('Sron Sreypich')
+      setUsername('admin@onm.com')
       setPassword('Admin@1234')
     } else if (role === 'Editor') {
-      setUsername('Editor User')
+      setUsername('editor@onm.com')
       setPassword('Editor@1234')
     } else {
-      setUsername('Viewer User')
+      setUsername('viewer@onm.com')
       setPassword('Viewer@1234')
     }
   }

@@ -24,14 +24,16 @@ const handler = NextAuth({
         const userInput = (credentials?.username || (credentials as any)?.email || '').trim()
         if (!userInput || !credentials?.password) return null
 
+        const inputLower = userInput.toLowerCase()
         const prisma = getPrisma()
         try {
           const user = await prisma.user.findFirst({
             where: {
               OR: [
+                { email: inputLower },
                 { name: userInput },
-                { email: userInput.toLowerCase() },
-                { email: userInput.toLowerCase().replace(/\s+/g, '') + '@onm.com' },
+                { email: { contains: inputLower } },
+                { name: { contains: userInput } },
               ],
             },
           })
