@@ -5,12 +5,13 @@ import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 
 const navItems = [
-  { href: '/',          label: 'Project Overview',   icon: '📊', section: 'MAIN' },
-  { href: '/divisions', label: 'Divisions',          icon: '🏢', section: 'MAIN' },
-  { href: '/projects',  label: 'All Projects',       icon: '📋', section: 'MAIN' },
-  { href: '/memos',     label: 'Meeting Memos',      icon: '📝', section: 'MAIN' },
-  { href: '/admin',     label: 'Data Entry',         icon: '✏️',  section: 'MANAGE' },
-  { href: '/import',    label: 'Import / Feed',      icon: '📥', section: 'MANAGE' },
+  { href: '/',             label: 'Project Overview',   icon: '📊', section: 'MAIN' },
+  { href: '/divisions',    label: 'Divisions',          icon: '🏢', section: 'MAIN' },
+  { href: '/projects',     label: 'All Projects',       icon: '📋', section: 'MAIN' },
+  { href: '/memos',        label: 'Meeting Memos',      icon: '📝', section: 'MAIN' },
+  { href: '/discord-recap',label: 'Discord Recap',     icon: '💬', section: 'MAIN' },
+  { href: '/admin',        label: 'Data Entry',         icon: '✏️',  section: 'MANAGE' },
+  { href: '/import',       label: 'Import / Feed',      icon: '📥', section: 'MANAGE' },
 ]
 
 export function Nav() {

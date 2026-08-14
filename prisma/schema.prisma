@@ -11,38 +11,40 @@ datasource db {
 }
 
 model Division {
-  id        Int      @id @default(autoincrement())
-  code      String   @unique // OPV, ESS, WPD, GSS, HFO
-  name      String
-  colorHex  String
-  leadName  String?
-  projects  Project[]
-  kpis      KPI[]
-  meetings  Meeting[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int            @id @default(autoincrement())
+  code         String         @unique // OPV, ESS, WPD, GSS, HFO
+  name         String
+  colorHex     String
+  leadName     String?
+  projects     Project[]
+  kpis         KPI[]
+  meetings     Meeting[]
+  discordRecaps DiscordRecap[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model Project {
-  id                Int         @id @default(autoincrement())
+  id                Int            @id @default(autoincrement())
   divisionId        Int
-  division          Division    @relation(fields: [divisionId], references: [id])
+  division          Division       @relation(fields: [divisionId], references: [id])
   name              String
-  code              String      @unique
+  code              String         @unique
   location          String?
   capacityMw        Float?
-  statusRag         String      @default("Green") // Green, Yellow, Red
-  percentComplete   Float       @default(0)
+  statusRag         String         @default("Green") // Green, Yellow, Red
+  percentComplete   Float          @default(0)
   currentPhase      String?
   nextMilestone     String?
   nextMilestoneDate DateTime?
-  needsVpAttention  Boolean     @default(false)
+  needsVpAttention  Boolean        @default(false)
   meetings          Meeting[]
   issues            Issue[]
   kpis              KPI[]
   actionItems       ActionItem[]
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  discordRecaps     DiscordRecap[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 }
 
 model Meeting {
@@ -125,4 +127,23 @@ model User {
   divisionId   Int?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model DiscordRecap {
+  id               Int      @id @default(autoincrement())
+  channelName      String   // e.g. "#opv-site-updates"
+  threadTitle      String   // e.g. "SNTU 350MW Transformer Testing & Substation Delay"
+  threadUrl        String?
+  rawMessages      String   // Transcripts / chat logs
+  executiveSummary String   // Bullet-point AI summary
+  alertLevel       String   @default("Normal") // Normal, Attention, Critical
+  detectedIssues   String?  // JSON string array of detected issues
+  actionItems      String?  // JSON string array of action items
+  projectId        Int?
+  project          Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  divisionId       Int?
+  division         Division? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  createdBy        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
