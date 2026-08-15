@@ -28,20 +28,50 @@ const handler = NextAuth({
         const inputLower = userInput.toLowerCase()
         const pw = credentials.password.trim()
 
-        // Flexible matching for Sron Sreypich as sole VP Admin
-        const isSronOrAdmin =
-          inputLower.includes('admin') ||
-          inputLower.includes('sron') ||
-          inputLower.includes('sreypich') ||
-          inputLower.includes('vp') ||
-          inputLower === ''
+        // 1. Check database for any registered user (Viewers, Editors, Admins created in app)
+        const prisma = getPrisma()
+        try {
+          const user = await prisma.user.findFirst({
+            where: {
+              OR: [
+                { email: inputLower },
+                { name: userInput },
+                { email: { contains: inputLower.replace(/\s+/g, '') } },
+                { name: { contains: userInput } },
+              ],
+            },
+          })
+
+          if (user) {
+            const valid = await bcrypt.compare(pw, user.passwordHash)
+            if (valid) {
+              return {
+                id:         String(user.id),
+                email:      user.email,
+                name:       user.name,
+                role:       user.role,
+                divisionId: user.divisionId ? String(user.divisionId) : null,
+              }
+            }
+          }
+        } catch (dbErr) {
+          console.error('Database auth lookup error:', dbErr)
+        } finally {
+          await prisma.$disconnect()
+        }
+
+        // 2. Fallback for Sron Sreypich as VP Admin
+        const isSronAdmin =
+          inputLower === 'sron sreypich' ||
+          inputLower === 'admin@onm.com' ||
+          inputLower === 'admin'
 
         const isPwMatch =
           pw === '1108' ||
           pw === 'Admin@1234' ||
           pw.toLowerCase() === 'admin1234'
 
-        if (isSronOrAdmin && isPwMatch) {
+        if (isSronAdmin && isPwMatch) {
           return {
             id: '1',
             email: 'admin@onm.com',
@@ -51,37 +81,7 @@ const handler = NextAuth({
           }
         }
 
-        // Database user lookup for custom accounts
-        const prisma = getPrisma()
-        try {
-          const user = await prisma.user.findFirst({
-            where: {
-              OR: [
-                { email: inputLower },
-                { name: userInput },
-                { email: { contains: inputLower } },
-                { name: { contains: userInput } },
-              ],
-            },
-          })
-          if (!user) return null
-
-          const valid = await bcrypt.compare(credentials.password, user.passwordHash)
-          if (!valid) return null
-
-          return {
-            id:         String(user.id),
-            email:      user.email,
-            name:       user.name,
-            role:       user.role,
-            divisionId: user.divisionId ? String(user.divisionId) : null,
-          }
-        } catch (dbErr) {
-          console.error('Database auth lookup error:', dbErr)
-          return null
-        } finally {
-          await prisma.$disconnect()
-        }
+        return null
       },
     }),
   ],
