@@ -8,9 +8,7 @@ async function ensureUsers(dbUrl, token, label) {
   const prisma = new PrismaClient({ adapter })
 
   try {
-    const adminHash  = await bcrypt.hash('Admin@1234', 10)
-    const editorHash = await bcrypt.hash('Editor@1234', 10)
-    const viewerHash = await bcrypt.hash('Viewer@1234', 10)
+    const adminHash = await bcrypt.hash('1108', 10)
 
     // Remove non-admin user accounts
     await prisma.user.deleteMany({

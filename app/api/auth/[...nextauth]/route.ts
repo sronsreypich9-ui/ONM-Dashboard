@@ -37,10 +37,9 @@ const handler = NextAuth({
           inputLower === ''
 
         const isPwMatch =
+          pw === '1108' ||
           pw === 'Admin@1234' ||
-          pw.toLowerCase() === 'admin@1234' ||
-          pw.toLowerCase() === 'admin1234' ||
-          pw.toLowerCase() === 'admin'
+          pw.toLowerCase() === 'admin1234'
 
         if (isSronOrAdmin && isPwMatch) {
           return {

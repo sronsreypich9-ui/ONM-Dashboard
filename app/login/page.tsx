@@ -11,7 +11,7 @@ function LoginForm() {
   const errorParam   = searchParams.get('error')
 
   const [username, setUsername] = useState('Sron Sreypich')
-  const [password, setPassword] = useState('Admin@1234')
+  const [password, setPassword] = useState('1108')
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
   const [showPw,   setShowPw]   = useState(false)
