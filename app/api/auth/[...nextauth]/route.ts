@@ -60,7 +60,23 @@ const handler = NextAuth({
           await prisma.$disconnect()
         }
 
-        // 2. Fallback for Sron Sreypich as VP Admin
+        // 2. Fallback for VP. Tann Tourthang as Viewer
+        const isTannViewer =
+          inputLower.includes('tann') ||
+          inputLower.includes('tourthang') ||
+          inputLower.includes('vptanntourthang')
+
+        if (isTannViewer && (pw === '1108' || pw === '1234' || pw.toLowerCase() === 'viewer@1234')) {
+          return {
+            id: '2',
+            email: 'vptanntourthang@onm.com',
+            name: 'VP. Tann Tourthang',
+            role: 'Viewer',
+            divisionId: null,
+          }
+        }
+
+        // 3. Fallback for Sron Sreypich as VP Admin
         const isSronAdmin =
           inputLower === 'sron sreypich' ||
           inputLower === 'admin@onm.com' ||
