@@ -1,11 +1,14 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 
+const SECRET = process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || 'onm-bu-dashboard-vp-secret-2026-key'
+
 export default withAuth(
   function middleware(req) {
     return NextResponse.next()
   },
   {
+    secret: SECRET,
     callbacks: {
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname
@@ -29,11 +32,11 @@ export default withAuth(
 
         // Strict RBAC URL guards
         if (path.startsWith('/import') && role !== 'Admin') {
-          return false // Restrict /import to Admin only
+          return false
         }
 
         if (path.startsWith('/admin') && role === 'Viewer') {
-          return false // Restrict /admin data entry from Viewers
+          return false
         }
 
         return true
