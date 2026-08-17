@@ -18,10 +18,10 @@ export async function GET(req: NextRequest) {
   }
 
   if (divisionId) {
-    where.OR = [
-      { divisionId: parseInt(divisionId) },
-      { project: { divisionId: parseInt(divisionId) } },
-    ]
+    where.divisionId = parseInt(divisionId)
+    if (!projectId) {
+      where.projectId = null
+    }
   }
 
   if (from || to) {
