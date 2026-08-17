@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
@@ -139,16 +140,16 @@ export function Nav() {
           <div key={section}>
             <div className="nav-section-label">{section}</div>
             {visibleNavItems.filter((i) => i.section === section).map((item) => (
-              <button
+              <Link
                 key={item.href}
+                href={item.href}
+                prefetch={true}
                 className={`nav-item ${pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) ? 'active' : ''}`}
-                onClick={() => router.push(item.href)}
-                onMouseEnter={() => router.prefetch(item.href)}
                 title={item.label}
               >
                 <span style={{ fontSize: 15 }}>{item.icon}</span>
                 <span className="nav-text">{item.label}</span>
-              </button>
+              </Link>
             ))}
           </div>
         ))}

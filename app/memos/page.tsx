@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
+import { useCachedData } from '@/lib/useDataCache'
 
 // Dynamically import editor to avoid SSR issues
 const RichEditor = dynamic(
@@ -204,53 +205,46 @@ export default function NotebookPage() {
   const [editDate,      setEditDate]      = useState(false)
   const [tags,          setTags]          = useState('')
   const [editTags,      setEditTags]      = useState(false)
-  const [loadingMemos,  setLoadingMemos]  = useState(false)
 
   // local draft of the active memo (for optimistic updates)
   const [draft, setDraft] = useState<Partial<Meeting>>({})
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Load divisions and projects
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/divisions').then((r) => r.json()),
-      fetch('/api/projects').then((r) => r.json()),
-    ]).then(([divs, projs]) => {
-      setDivisions(divs)
-      setProjects(projs)
-      if (divs.length) {
-        setExpandedDivs(new Set(divs.map((d: any) => d.id)))
-      }
-    })
-  }, [])
+  // Use cached data for divisions and projects
+  const { data: divisionsData } = useCachedData<Division[]>('/api/divisions')
+  const { data: projectsData }  = useCachedData<Project[]>('/api/projects')
 
-  // Load meetings for selected scope
   useEffect(() => {
-    setLoadingMemos(true)
-    let url = '/api/meetings'
-    if (selScope === 'general') {
-      url += '?general=true'
-    } else if (selScope.startsWith('div-')) {
-      url += `?divisionId=${selScope.replace('div-', '')}`
-    } else if (selScope.startsWith('proj-')) {
-      url += `?projectId=${selScope.replace('proj-', '')}`
+    if (divisionsData && Array.isArray(divisionsData)) {
+      setDivisions(divisionsData)
+      setExpandedDivs((prev) => (prev.size === 0 ? new Set(divisionsData.map((d) => d.id)) : prev))
     }
+    if (projectsData && Array.isArray(projectsData)) {
+      setProjects(projectsData)
+    }
+  }, [divisionsData, projectsData])
 
-    fetch(url)
-      .then((r) => r.json())
-      .then((data) => {
-        setMeetings(data)
-        setLoadingMemos(false)
-        if (data.length > 0) {
-          setSelMeetingId(data[0].id)
-          setDraft(data[0])
-          setTags(data[0].tags || '')
-        } else {
-          setSelMeetingId(null)
-          setDraft({})
-        }
-      })
-  }, [selScope])
+  let memoUrl = '/api/meetings'
+  if (selScope === 'general') {
+    memoUrl += '?general=true'
+  } else if (selScope.startsWith('div-')) {
+    memoUrl += `?divisionId=${selScope.replace('div-', '')}`
+  } else if (selScope.startsWith('proj-')) {
+    memoUrl += `?projectId=${selScope.replace('proj-', '')}`
+  }
+
+  const { data: meetingsData, loading: loadingMemos } = useCachedData<Meeting[]>(memoUrl)
+
+  useEffect(() => {
+    if (meetingsData && Array.isArray(meetingsData)) {
+      setMeetings(meetingsData)
+      if (meetingsData.length > 0 && !selMeetingId) {
+        setSelMeetingId(meetingsData[0].id)
+        setDraft(meetingsData[0])
+        setTags(meetingsData[0].tags || '')
+      }
+    }
+  }, [meetingsData, selMeetingId])
 
   // Update draft when meeting selection changes
   useEffect(() => {
