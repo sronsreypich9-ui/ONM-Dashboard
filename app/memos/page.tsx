@@ -498,69 +498,41 @@ export default function NotebookPage() {
 
           <div style={{ height: 1, background: '#e2e8f0', margin: '4px 12px 8px' }} />
 
-          <div style={{ padding: '4px 12px 4px', fontSize: 10, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
-            Divisions & Projects
+          <div style={{ padding: '8px 12px 4px', fontSize: 10, fontWeight: 800, color: '#94a3b8', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
+            Business Divisions
           </div>
 
-          {projectsByDiv.map(({ div, projects: divProjs }) => (
+          {projectsByDiv.map(({ div }) => (
             <div key={div.id}>
-              {/* Division header */}
+              {/* Division Item */}
               <button
-                onClick={() => {
-                  setSelScope(`div-${div.id}`)
-                  setExpandedDivs((s) => new Set(s).add(div.id))
-                }}
+                onClick={() => setSelScope(`div-${div.id}`)}
                 style={{
-                  width: '100%', background: selScope === `div-${div.id}` ? '#f0fdf4' : 'none',
+                  width: '100%', background: selScope === `div-${div.id}` ? '#f0fdfa' : 'none',
                   border: 'none', borderLeft: selScope === `div-${div.id}` ? `3px solid ${div.colorHex}` : '3px solid transparent',
-                  cursor: 'pointer', padding: '8px 12px',
-                  display: 'flex', alignItems: 'center', gap: 8,
+                  cursor: 'pointer', padding: '9px 12px',
+                  display: 'flex', alignItems: 'center', gap: 10,
                   fontSize: 12, fontWeight: 700, color: '#334155', textAlign: 'left',
+                  transition: 'background 0.1s',
                 }}
+                onMouseEnter={(e) => { if (selScope !== `div-${div.id}`) e.currentTarget.style.background = '#f8fafc' }}
+                onMouseLeave={(e) => { if (selScope !== `div-${div.id}`) e.currentTarget.style.background = 'none' }}
               >
                 <span style={{
-                  width: 22, height: 22, borderRadius: 5, background: div.colorHex,
-                  color: 'white', fontSize: 9, fontWeight: 800,
+                  width: 24, height: 24, borderRadius: 6, background: div.colorHex,
+                  color: 'white', fontSize: 10, fontWeight: 800,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 }}>{div.code}</span>
-                <span style={{ flex: 1, fontSize: 11.5, fontWeight: 700 }}>{div.code}</span>
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setExpandedDivs((s) => {
-                      const n = new Set(s)
-                      n.has(div.id) ? n.delete(div.id) : n.add(div.id)
-                      return n
-                    })
-                  }}
-                  style={{
-                    fontSize: 9, color: '#94a3b8', padding: '2px 4px',
-                    transform: expandedDivs.has(div.id) ? 'rotate(90deg)' : 'none',
-                    transition: 'transform 0.15s',
-                  }}
-                >▶</span>
-              </button>
-              {/* Projects under division */}
-              {expandedDivs.has(div.id) && divProjs.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setSelScope(`proj-${p.id}`)}
-                  style={{
-                    width: '100%', background: selScope === `proj-${p.id}` ? '#e0f2fe' : 'none',
-                    border: 'none', borderLeft: selScope === `proj-${p.id}` ? `3px solid ${div.colorHex}` : '3px solid transparent',
-                    cursor: 'pointer', padding: '7px 12px 7px 26px',
-                    display: 'flex', alignItems: 'flex-start', gap: 6, textAlign: 'left',
-                    transition: 'background 0.1s',
-                  }}
-                  onMouseEnter={(e) => { if (selScope !== `proj-${p.id}`) e.currentTarget.style.background = '#f1f5f9' }}
-                  onMouseLeave={(e) => { if (selScope !== `proj-${p.id}`) e.currentTarget.style.background = 'none' }}
-                >
-                  <span style={{ fontSize: 12, marginTop: 1 }}>📁</span>
-                  <span style={{ fontSize: 11.5, fontWeight: selScope === `proj-${p.id}` ? 700 : 500, color: selScope === `proj-${p.id}` ? '#0f172a' : '#475569', lineHeight: 1.3 }}>
-                    {p.name}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: 12, fontWeight: selScope === `div-${div.id}` ? 800 : 700, color: selScope === `div-${div.id}` ? '#0f766e' : '#1e293b' }}>
+                    {div.code} Division
                   </span>
-                </button>
-              ))}
+                  <span style={{ fontSize: 10.5, color: '#64748b', fontWeight: 500 }}>
+                    {div.name}
+                  </span>
+                </div>
+              </button>
             </div>
           ))}
         </div>
